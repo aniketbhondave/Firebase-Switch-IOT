@@ -5,10 +5,10 @@
 #include <ESP8266WebServer.h>     //Local WebServer used to serve the configuration portal
 #include <WiFiManager.h>
 
-#define FIREBASE_HOST "homelights-6c78c.firebaseio.com"  //Change to your Firebase RTDB project ID e.g. Your_Project_ID.firebaseio.com
-#define FIREBASE_AUTH "ywt7thpWCpCSsp0m8QUsdoC2b1b0nnsEZEp2W3k3" //Change to your Firebase RTDB secret password
-#define WIFI_SSID "Refrain"                                               //your WiFi SSID for which yout NodeMCU connects
-#define WIFI_PASSWORD "lemontechnosys9762a" 
+#define FIREBASE_HOST ""  //Change to your Firebase RTDB project ID e.g. Your_Project_ID.firebaseio.com
+#define FIREBASE_AUTH "" //Change to your Firebase RTDB secret password
+#define WIFI_SSID ""   //Add Router/Hotspot Name                                            //your WiFi SSID for which yout NodeMCU connects
+#define WIFI_PASSWORD "" //Add Router/Hotspot Password
 
 //Define Firebase Data objects
 FirebaseData firebaseData1;
@@ -55,22 +55,21 @@ String previousManualButton4State = "HIGH";
 void setup()
 {
      Serial.begin(115200);
+   
+    //You can directly manage to connect the ESP to router by IP address : 192.168.4.1
     //WifiManager Variables
     WiFiManager wifiManager;
-    wifiManager.autoConnect("Switch Board Wifi");
+    wifiManager.autoConnect("Switch Board Wifi"); 
     wifiManager.setAPCallback(configModeCallback);
     
 
-
-
-    //pinMode(ledPin, OUTPUT);
+//OUTPUTS
     pinMode(pin1, OUTPUT);
     pinMode(pin2, OUTPUT);
     pinMode(pin3, OUTPUT);
     pinMode(pin4, OUTPUT);
-    //pinMode(LED, OUTPUT);
-
-    
+  
+//INPUTS
     pinMode(button1, INPUT);
     pinMode(button2, INPUT);
     pinMode(button3, INPUT);
@@ -86,25 +85,13 @@ void setup()
    digitalWrite(pin4, HIGH);
    
 
-    
-//    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-//    Serial.print("Connecting to Wi-Fi");
-//    while (WiFi.status() != WL_CONNECTED)
-//    {
-//        Serial.print(".");
-//        delay(300);
-//    }
-//    Serial.println();
-//    Serial.print("Connected with IP: ");
-//    Serial.println(WiFi.localIP());
-//    Serial.println();
-
     Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
     Firebase.reconnectWiFi(true);
 
 
-    
-    
+   
+//Can be used if the there is only single element that need to be checked
+     
 //  if (!Firebase.beginStream(firebaseData1, path + "/" + nodeID1))
 //    {
 //        Serial.println("Could not begin stream 1");
@@ -112,6 +99,8 @@ void setup()
 //        Serial.println();
 //    }
 
+//Can be used if the there is multiple element that need to be checked on firebase Acc.
+     
 Firebase.setMultiPathStreamCallback(firebaseData1, streamCallback, streamTimeoutCallback);
 
   if (!Firebase.beginMultiPathStream(firebaseData1, path, childPath, childPathSize))
@@ -130,7 +119,6 @@ Firebase.setMultiPathStreamCallback(firebaseData1, streamCallback, streamTimeout
 void configModeCallback (WiFiManager *myWiFiManager) {
   Serial.println("Entered config mode");
   Serial.println(WiFi.softAPIP());
-
   Serial.println(myWiFiManager->getConfigPortalSSID());
 }
 
@@ -174,7 +162,6 @@ void streamTimeoutCallback(bool timeout)
 {
   if (timeout)
   {
-    
     Serial.println();
     Serial.println("Stream timeout, resume streaming...");
     //setTrigger("T1");
@@ -307,20 +294,6 @@ void loop()
    buttonState3 = digitalRead(button3);
    buttonState4 = digitalRead(button4);
    
-//Serial.println("Button 1");
-//Serial.println("Digital Read 1:" + buttonState1);
-//Serial.println(previousManualButton1State);
-//Serial.println("Button 2");
-//Serial.println("Digital Read 2:" + buttonState2);
-//Serial.println(previousManualButton2State);
-//Serial.println("Button 3");
-//Serial.println("Digital Read 3:" + buttonState3);
-//Serial.println(previousManualButton3State);
-//Serial.println("Button 4");
-//Serial.println("Digital Read 4:" + buttonState4);
-//Serial.println(previousManualButton4State);
-   
-
 if(buttonState1 == HIGH)
 {
   if (previousManualButton1State == "LOW")
